@@ -4,16 +4,38 @@ import evaluation
 
 evalParams = evaluation.EvalParams()
 
-# alpha beta functions based heavily on psuedo-code from here:
+# alphaBeta Negamax implementation based heavily on psuedo-code from here:
 # https://www.chessprogramming.org/Alpha-Beta
 
-def alphaBetaMax(board, alpha, beta, depthLeft):
+# Quiesence search function based heavily on psuedo-code from here:
+# https://www.chessprogramming.org/Quiescence_Search
+
+def quiesence(board, alpha, beta):
+   stand_pat = evaluation.evaluateBoard(board, evalParams)
+   if stand_pat >= beta:
+      return beta
+   if stand_pat > alpha:
+      alpha = stand_pat
+   
+   for move in board.legal_moves:
+      if board.is_capture(move):
+         board.push(move)
+         score = -1 * quiescence(board, -1 * alpha, -1 * beta)
+         board.pop()
+         if score >= beta:
+            return beta
+         if score > alpha:
+            alpha = score
+
+   return alpha 
+
+def alphaBeta(board, alpha, beta, depthLeft):
    if depthLeft == 0:
-      return evaluation.evaluateBoard(board, evalParams)
+      return quiesence(board, alpha, beta)
 
    for move in board.legal_moves:
       board.push(move)
-      score = alphaBetaMin(board, alpha, beta, depthLeft - 1)
+      score = -1 * alphaBeta(board, -1 * alpha, -1 * beta, depthLeft - 1)
       board.pop()
       if score >= beta:
          return beta
@@ -22,30 +44,15 @@ def alphaBetaMax(board, alpha, beta, depthLeft):
 
    return alpha
 
-def alphaBetaMin(board, alpha, beta, depthLeft):
-   if depthLeft == 0:
-      return evaluation.evaluateBoard(board, evalParams)
-
-   for move in board.legal_moves:
-      board.push(move)
-      score = alphaBetaMax(board, alpha, beta, depthLeft - 1)
-      board.pop()
-      if score <= alpha:
-         return alpha
-      if score < beta:
-         beta = score
-
-   return beta
-
 def get_move(board):
    best_score = -9999
    beta = 9999
    alpha = -9999
-   depth = 1
+   depth = 3
 
    for move_to_eval in board.legal_moves:
       board.push(move_to_eval)
-      move_score = alphaBetaMax(board, alpha, beta, 3)
+      move_score = -1 * alphaBeta(board, alpha, beta, depth)
       if move_score >= best_score:
          best_score = move_score
          best_move = move_to_eval
