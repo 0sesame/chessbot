@@ -38,18 +38,15 @@ def alphaBetaMin(board, alpha, beta, depthLeft):
    return beta
 
 def get_move(board):
-   legal_moves = [move for move in board.legal_moves]
-   best_move = legal_moves[0]
-
    best_score = -9999
    beta = 9999
    alpha = -9999
    depth = 1
 
-   for move_to_eval in legal_moves:
+   for move_to_eval in board.legal_moves:
       board.push(move_to_eval)
-      move_score = alphaBetaMax(board, alpha, beta, 1)
-      if move_score > best_score:
+      move_score = alphaBetaMax(board, alpha, beta, 3)
+      if move_score >= best_score:
          best_score = move_score
          best_move = move_to_eval
       board.pop()
@@ -67,8 +64,10 @@ if __name__ == "__main__":
    board = chess.Board()
    while(not board.is_game_over()):
       if(board.turn):
-         make_move(board) 
+         print("white move")
+         make_move(board)
       else:
+         print("black random move")
          make_random_move(board)
       print(board)
       print("------------------------------------")

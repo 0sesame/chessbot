@@ -12,6 +12,15 @@ class EvalParams:
       
 
 def evaluateBoard(board, params):
+   if board.is_checkmate():
+      if not board.turn:
+         return 9999
+      else:
+         return -9999
+
+   if board.is_game_over():
+      return -5000
+
    wpval = params.pawn_w * len(board.pieces(chess.PAWN, chess.WHITE))
    bpval = -1 * params.pawn_w * len(board.pieces(chess.PAWN, chess.BLACK))
 
