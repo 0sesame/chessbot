@@ -10,6 +10,7 @@ def getmove():
         if not game:
             return None
         numOfMoves = int(game.headers['PlyCount'])
+        # Skip short games
         if numOfMoves < 4:
             continue
 
