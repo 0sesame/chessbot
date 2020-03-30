@@ -1,7 +1,7 @@
 import chess.pgn
 import random
 
-f = open('./ficsgamesdb_search_122216.pgn')
+f = open('./ficsgamesdb_search_122253.pgn')
 
 
 def getmove():
