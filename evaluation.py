@@ -23,7 +23,8 @@ class EvalParams:
          self.randomize_weights()
    
    def randomize_weights(self):
-      self.params = [random.randint(0, 2500) for _ in range(self.param_c)]
+      self.params = [random.randint(0, 65535) for _ in range(self.param_c)]
+      self.params[PAWN_W] = 100
    
 
 def on_board(pos):
