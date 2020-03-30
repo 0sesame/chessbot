@@ -2,7 +2,7 @@ import chess
 import random
 import evaluation
 
-evalParams = evaluation.EvalParams()
+evalParams = evaluation.EvalParams(False)
 
 # alphaBeta Negamax implementation based heavily on psuedo-code from here:
 # https://www.chessprogramming.org/Alpha-Beta
@@ -68,18 +68,31 @@ def make_random_move(board):
    board.push(legal_moves[random.randint(0, len(legal_moves) - 1)])
 
 if __name__ == "__main__":
-   board = chess.Board()
-   while(not board.is_game_over()):
-      if(board.turn):
-         print("white move")
-         make_move(board)
+   win ="1-0"
+   loss = "0-1"
+   ties = "1/2 - 1/2"
+   wins = 0
+   losses = 0
+   ties = 0
+   for i in range(20):
+      board = chess.Board()
+      while(not board.is_game_over()):
+         if(board.turn):
+            print("white move")
+            make_move(board)
+         else:
+            print("black random move")
+            make_random_move(board)
+         print(board)
+         print("------------------------------------")
+      if board.result() == win:
+         wins += 1
+      elif board.result() == loss:
+         losses += 1
       else:
-         print("black random move")
-         make_random_move(board)
-      print(board)
-      print("------------------------------------")
+         ties += 1
 
-   print(board.result())
+   print("wins: {0}   losses: {1}    ties: {2}".format(wins, losses, ties))
    print('Is stalemate: {0}'.format(board.is_stalemate()))
    print('Is insufficient: {0}'.format(board.is_insufficient_material()))
    print('Is fivefold: {0}'.format(board.is_fivefold_repetition()))
