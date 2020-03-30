@@ -2,7 +2,6 @@ import chess
 import random
 import evaluation
 
-evalParams = evaluation.EvalParams(False)
 
 # alphaBeta Negamax implementation based heavily on psuedo-code from here:
 # https://www.chessprogramming.org/Alpha-Beta
@@ -10,8 +9,8 @@ evalParams = evaluation.EvalParams(False)
 # Quiesence search function based heavily on psuedo-code from here:
 # https://www.chessprogramming.org/Quiescence_Search
 
-def quiesence(board, alpha, beta):
-   stand_pat = evaluation.evaluateBoard(board, evalParams)
+def quiesence(board, params, alpha, beta):
+   stand_pat = evaluation.evaluateBoard(board, params)
    if stand_pat >= beta:
       return beta
    if stand_pat > alpha:
@@ -20,7 +19,7 @@ def quiesence(board, alpha, beta):
    for move in board.legal_moves:
       if board.is_capture(move):
          board.push(move)
-         score = -1 * quiescence(board, -1 * alpha, -1 * beta)
+         score = -1 * quiesence(board, params, -1 * alpha, -1 * beta)
          board.pop()
          if score >= beta:
             return beta
@@ -29,13 +28,13 @@ def quiesence(board, alpha, beta):
 
    return alpha 
 
-def alphaBeta(board, alpha, beta, depthLeft):
+def alphaBeta(board, params, alpha, beta, depthLeft):
    if depthLeft == 0:
-      return quiesence(board, alpha, beta)
+      return quiesence(board, params, alpha, beta)
 
    for move in board.legal_moves:
       board.push(move)
-      score = -1 * alphaBeta(board, -1 * alpha, -1 * beta, depthLeft - 1)
+      score = -1 * alphaBeta(board, params, -1 * alpha, -1 * beta, depthLeft - 1)
       board.pop()
       if score >= beta:
          return beta
@@ -44,15 +43,15 @@ def alphaBeta(board, alpha, beta, depthLeft):
 
    return alpha
 
-def generate_move(board):
+def generate_move(board, params):
    best_score = -9999
    beta = 9999
    alpha = -9999
-   depth = 3
+   depth = 2
 
    for move_to_eval in board.legal_moves:
       board.push(move_to_eval)
-      move_score = -1 * alphaBeta(board, alpha, beta, depth)
+      move_score = -1 * alphaBeta(board, params, alpha, beta, depth)
       if move_score >= best_score:
          best_score = move_score
          best_move = move_to_eval
@@ -60,8 +59,8 @@ def generate_move(board):
    
    return best_move
 
-def make_move(board):
-   board.push(generate_move(board))
+def make_move(board, params):
+   board.push(generate_move(board, params))
 
 def make_random_move(board):
    legal_moves = [move for move in board.legal_moves]
@@ -74,12 +73,13 @@ if __name__ == "__main__":
    wins = 0
    losses = 0
    ties = 0
+   params = evaluation.EvalParams(False)
    for i in range(20):
       board = chess.Board()
       while(not board.is_game_over()):
          if(board.turn):
             print("white move")
-            make_move(board)
+            make_move(board, params)
          else:
             print("black random move")
             make_random_move(board)
