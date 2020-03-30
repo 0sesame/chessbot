@@ -14,10 +14,9 @@ def get_correctness_rate(params):
       if params_move == good_move:
          correct_c += 1
       compared_c += 1
-      if(compare_c > 200):
+      if compared_c > 200:
          break
    
-   print("correct_rate: {0}".format(correct_c / compared_c))
    return correct_c / compared_c 
 
 def generate_offspring_param(param1, param2):
@@ -53,6 +52,8 @@ def get_offspring_uniform_crossover(parent1, parent2):
 
 def create_parent_pairs(population):
    total_fitness = sum([p.fitness for p in population])
+   if total_fitness == 0.0:
+      total_fitness = 1.0
    parents = []
    while len(parents) < len(population):
       parents.append(random.choices(population, 

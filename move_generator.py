@@ -47,11 +47,11 @@ def generate_move(board, params):
    best_score = -9999
    beta = 9999
    alpha = -9999
-   depth = 2
+   depth = 1
 
    for move_to_eval in board.legal_moves:
       board.push(move_to_eval)
-      move_score = -1 * alphaBeta(board, params, alpha, beta, depth)
+      move_score = alphaBeta(board, params, alpha, beta, depth - 1)
       if move_score >= best_score:
          best_score = move_score
          best_move = move_to_eval
