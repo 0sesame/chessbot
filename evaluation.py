@@ -23,7 +23,7 @@ class EvalParams:
          self.randomize_weights()
    
    def randomize_weights(self):
-      self.params = [random.randint(0, 65535) for _ in range(self.param_c)]
+      self.params = [random.randint(0, 2047) for _ in range(self.param_c)]
       self.params[PAWN_W] = 100
    
 
@@ -120,7 +120,7 @@ def evaluateMaterial(board, params):
    bqval = -1 * params[QUEEN_W] * len(board.pieces(chess.QUEEN, chess.BLACK))
 
    wkival = params[KING_W] * len(board.pieces(chess.KING, chess.WHITE))
-   bkival = params[KING_W] * len(board.pieces(chess.KING, chess.BLACK))
+   bkival = -1 * params[KING_W] * len(board.pieces(chess.KING, chess.BLACK))
 
    return (wpval + bpval + wkval + bkval + wbval + bbval 
          + wrval + brval + wqval + bqval + wkival + bkival)

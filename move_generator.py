@@ -47,11 +47,11 @@ def generate_move(board, params):
    best_score = -9999
    beta = 9999
    alpha = -9999
-   depth = 1
+   depth = 3
 
    for move_to_eval in board.legal_moves:
       board.push(move_to_eval)
-      move_score = alphaBeta(board, params, alpha, beta, depth - 1)
+      move_score = -1 * alphaBeta(board, params, alpha, beta, depth - 1)
       if move_score >= best_score:
          best_score = move_score
          best_move = move_to_eval
@@ -74,7 +74,7 @@ if __name__ == "__main__":
    losses = 0
    ties = 0
    params = evaluation.EvalParams(False)
-   for i in range(20):
+   for i in range(50):
       board = chess.Board()
       while(not board.is_game_over()):
          if(board.turn):

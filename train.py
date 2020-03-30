@@ -14,15 +14,15 @@ def get_correctness_rate(params):
       if params_move == good_move:
          correct_c += 1
       compared_c += 1
-      if compared_c > 200:
+      if compared_c > 2:
          break
    
    return correct_c / compared_c 
 
 def generate_offspring_param(param1, param2):
    mutation_chance = .005
-   param1_b = '{:016b}'.format(param1)
-   param2_b = '{:016b}'.format(param2)
+   param1_b = '{:011b}'.format(param1)
+   param2_b = '{:011b}'.format(param2)
    offspring_param = ''
 
    for i in range(len(param1_b)):
@@ -33,15 +33,15 @@ def generate_offspring_param(param1, param2):
 
       if random.random() < .005:
          if offspring_param[i] == '1':
-            offspring_param[i] = '0'
+            offspring_param = offspring_param[:-1] + '0'
          else:
-            offspring_param[i] = '1'
+            offspring_param = offspring_param[:-1] + '1'
 
    return int(offspring_param, 2)  
 
 def get_offspring_uniform_crossover(parent1, parent2):
    cross_rate = 0.75
-   if random.random > cross_rate:
+   if random.random() > cross_rate:
       return parent1
    offspring = evaluation.EvalParams(False)
    for param in range(offspring.param_c):
@@ -80,8 +80,8 @@ def create_population(population_size):
    return [evaluation.EvalParams(True) for _ in range(population_size)]
 
 if __name__ == "__main__":
-   population_size = 100
-   generations = 100
+   population_size = 1000
+   generations = 500
    current_pop = create_population(population_size)
    for generation in range(generations):
       print("getting fitness for generation {0}".format(generation)) 
@@ -90,8 +90,6 @@ if __name__ == "__main__":
       print("population fitness: ")
       print([p.fitness for p in current_pop])
       current_pop = generate_next_population(current_pop)
-   
-   with open("strongest.txt", "w") as file:
-      for p in population:
-         file.write("params({0}): {1}\n".format(p.fitness, p.params))
-   
+      with open("strongest.txt", "w") as file:
+         for p in current_pop:
+            file.write("params({0}): {1}\n".format(p.fitness, p.params)) 
