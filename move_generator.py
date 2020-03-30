@@ -44,7 +44,7 @@ def alphaBeta(board, alpha, beta, depthLeft):
 
    return alpha
 
-def get_move(board):
+def generate_move(board):
    best_score = -9999
    beta = 9999
    alpha = -9999
@@ -61,7 +61,7 @@ def get_move(board):
    return best_move
 
 def make_move(board):
-   board.push(get_move(board))
+   board.push(generate_move(board))
 
 def make_random_move(board):
    legal_moves = [move for move in board.legal_moves]

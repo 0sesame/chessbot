@@ -12,6 +12,8 @@ class EvalParams:
       
       self.doubled_pawn_penalty = 14
       self.passwed_pawns = 5
+      self.rook_hor_mobility = 5
+      self.rook_vert_mobility = 20
       
       if randomize == True:
          self.randomize_weights()
@@ -19,6 +21,61 @@ class EvalParams:
    def randomize_weights(self):
       return
 
+def on_board(pos):
+   return 0 <= pos and pos <= 63
+
+def get_rook_possible_vert_moves(board, rook):
+   possible_moves = 0
+   curr = rook - 8
+   while (on_board(curr) and chess.square_file(curr) == chess.square_file(rook)
+         and board.piece_at(curr) != None):
+      possible_moves += 1 
+      curr -= 8
+   
+   curr = rook + 8
+   while (on_board(curr) and chess.square_file(curr) == chess.square_file(rook)
+         and board.piece_at(curr) != None):
+      possible_moves += 1 
+      curr += 8
+
+   return possible_moves
+
+def get_rook_possible_hor_moves(board, rook):
+   possible_moves = 0
+   curr = rook - 1
+   while (on_board(curr) and chess.square_rank(curr) == chess.square_rank(rook)
+         and board.piece_at(curr) != None):
+      possible_moves += 1 
+      curr -= 1
+   
+   curr = rook + 1
+   while (on_board(curr) and chess.square_rank(curr) == chess.square_rank(rook)
+         and board.piece_at(curr) != None):
+      possible_moves += 1 
+      curr += 1
+   
+   return possible_moves
+   
+def evaluate_rook_mobility(board, params):
+   white_rooks = board.pieces(chess.ROOK, chess.WHITE)
+   black_rooks = board.pieces(chess.ROOK, chess.BLACK)
+  
+   white_hor_mobility = 0 
+   white_vert_mobility = 0 
+   for rook in list(white_rooks):
+      white_hor_mobility += get_rook_possible_hor_moves(board, rook) 
+      white_vert_mobility += get_rook_possible_vert_moves(board, rook) 
+
+   black_hor_mobility = 0 
+   black_vert_mobility = 0 
+   for rook in list(black_rooks):
+      black_hor_mobility += get_rook_possible_hor_moves(board, rook) 
+      black_vert_mobility += get_rook_possible_vert_moves(board, rook) 
+
+   return (params.rook_hor_mobility*(white_hor_mobility - black_hor_mobility) +
+           params.rook_vert_mobility*(white_vert_mobility - black_vert_mobility))
+         
+   
 def evaluate_doubled_passed_pawns(board, params):
    white_doubled = 0
    black_doubled = 0
@@ -72,7 +129,8 @@ def evaluateBoard(board, params):
       return 0
 
    evaluation = (evaluateMaterial(board, params) 
-               + evaluate_doubled_passed_pawns(board, params))
+               + evaluate_doubled_passed_pawns(board, params)
+               + evaluate_rook_mobility(board, params))
 
    if board.turn:
       return evaluateMaterial(board, params) 
