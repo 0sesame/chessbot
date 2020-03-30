@@ -1,10 +1,7 @@
 import chess.pgn
 import random
 
-f = open('./ficsgamesdb_search_122216.pgn')
-
-
-def getmove():
+def get_move(f):
     while True:
         game = chess.pgn.read_game(f)
         if not game:
